@@ -7,6 +7,8 @@ using System.Text;
 public class TestController : MonoBehaviour
 {
     [SerializeField]
+    private Text debugText;
+    [SerializeField]
     private GameObject controllerObject;
     [SerializeField]
     private GameObject armModel;
@@ -16,6 +18,8 @@ public class TestController : MonoBehaviour
     private GameObject[] pickabledObjects;
     private OVRInput.Controller activeController;
     private Coroutine moveToRoutine = null;
+
+    private float speed = 8.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +34,7 @@ public class TestController : MonoBehaviour
         UpdatePosRotArm();
         UpdateLine();
         CheckInput();
+        FPSMove();
     }
 
     private void UpdatePosRotArm()
@@ -56,13 +61,44 @@ public class TestController : MonoBehaviour
         {
             ShowLine(true);
             RayCast();
-            Vector3 destination = controllerObject.transform.position + controllerObject.transform.forward * 10;
-            destination = new Vector3(destination.x, transform.position.y, destination.z);
-            StartMoveTo(destination, 2.0f);
         }
         else
         {
             ShowLine(false);
+        }
+
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger))
+        {
+            Vector3 destination = controllerObject.transform.position + controllerObject.transform.forward * 2;
+            destination = new Vector3(destination.x, transform.position.y, destination.z);
+            StartMoveTo(destination, 1.0f);
+        }
+    }
+
+    private void FPSMove()
+    {
+        //if (OVRInput.Get(OVRInput.Button.One))
+        {
+            Vector2 touch = OVRInput.Get(OVRInput.Axis2D.PrimaryTouchpad);
+            string touchCoords = "DB - Touch coords X1: " + touch.x;
+            //debugText.text = touchCoords;
+
+            Vector3 controllerForward = new Vector3(controllerObject.transform.forward.x, 0, controllerObject.transform.forward.z);
+
+            transform.position += Vector3.right * touch.x * speed * Time.deltaTime; 
+            transform.position += Vector3.forward * touch.y * speed * Time.deltaTime;
+
+            /*
+            touch = new Vector2(touch.x * Time.deltaTime, touch.y * Time.deltaTime);
+            string touchCoords = "DB - Touch coords X1: " + touch.x + " Y1: " + touch.y;
+            Debug.Log(touchCoords);
+            debugText.text = touchCoords;
+
+
+            Vector3 move = controllerObject.transform.right * touch.x + controllerObject.transform.forward * touch.y;
+            move = new Vector3(move.x * Time.deltaTime, transform.position.y, move.z * Time.deltaTime);
+            transform.position = move;
+            */
         }
     }
 
