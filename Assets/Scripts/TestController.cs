@@ -9,6 +9,8 @@ public class TestController : MonoBehaviour
     [SerializeField]
     private Text debugText;
     [SerializeField]
+    private GameObject headObject;
+    [SerializeField]
     private GameObject controllerObject;
     [SerializeField]
     private GameObject armModel;
@@ -77,29 +79,10 @@ public class TestController : MonoBehaviour
 
     private void FPSMove()
     {
-        //if (OVRInput.Get(OVRInput.Button.One))
-        {
-            Vector2 touch = OVRInput.Get(OVRInput.Axis2D.PrimaryTouchpad);
-            string touchCoords = "DB - Touch coords X1: " + touch.x;
-            //debugText.text = touchCoords;
-
-            Vector3 controllerForward = new Vector3(controllerObject.transform.forward.x, 0, controllerObject.transform.forward.z);
-
-            transform.position += Vector3.right * touch.x * speed * Time.deltaTime; 
-            transform.position += Vector3.forward * touch.y * speed * Time.deltaTime;
-
-            /*
-            touch = new Vector2(touch.x * Time.deltaTime, touch.y * Time.deltaTime);
-            string touchCoords = "DB - Touch coords X1: " + touch.x + " Y1: " + touch.y;
-            Debug.Log(touchCoords);
-            debugText.text = touchCoords;
-
-
-            Vector3 move = controllerObject.transform.right * touch.x + controllerObject.transform.forward * touch.y;
-            move = new Vector3(move.x * Time.deltaTime, transform.position.y, move.z * Time.deltaTime);
-            transform.position = move;
-            */
-        }
+        Vector2 touch = OVRInput.Get(OVRInput.Axis2D.PrimaryTouchpad);
+        Vector3 headForward = new Vector3(headObject.transform.forward.x, 0, headObject.transform.forward.z);
+        transform.position += headObject.transform.right * touch.x * Time.deltaTime * speed + headForward * touch.y * Time.deltaTime * speed;
+        transform.position = new Vector3(transform.position.x, 1.8f, transform.position.z);
     }
 
     private void RayCast()
